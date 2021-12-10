@@ -15,3 +15,12 @@ repositories {
 dependencies {
     implementation("org.postgresql:postgresql:42.2.23")
 }
+
+tasks.withType<Jar>() {
+    manifest {
+        attributes["Main-Class"] = "ru.oprosso.Main"
+    }
+    configurations["compileClasspath"].forEach { file: File ->
+        from(zipTree(file.path))
+    }
+}

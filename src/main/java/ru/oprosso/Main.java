@@ -45,12 +45,11 @@ public class Main {
 
     private static void processBatch(Connection connectionLinks, Statement st) {
         LinkService linkService = Services.getContainer().getLinkService();
-//        var connectionService = Services.getContainer().getConnectionService();
 
         var executorService = new BlockingExecutor(1, Executors.newFixedThreadPool(1));
 
         try {
-            st.execute("MOVE FORWARD 58500000 from links_to_remove_cursor;");
+            st.execute("MOVE FORWARD 0 from links_to_remove_cursor;");
 
             var queryFetch = "FETCH links_to_remove_cursor;";
             var rs = st.executeQuery(queryFetch);
