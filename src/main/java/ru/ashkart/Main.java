@@ -1,4 +1,4 @@
-package ru.oprosso;
+package ru.ashkart;
 
 import java.sql.*;
 import java.util.concurrent.Executors;

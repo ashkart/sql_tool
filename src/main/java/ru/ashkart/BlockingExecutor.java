@@ -1,4 +1,4 @@
-package ru.oprosso;
+package ru.ashkart;
 
 import java.util.List;
 import java.util.concurrent.*;

@@ -1,4 +1,4 @@
-package ru.oprosso;
+package ru.ashkart;
 
 import java.sql.Connection;
 import java.sql.SQLException;

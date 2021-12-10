@@ -1,4 +1,4 @@
-package ru.oprosso;
+package ru.ashkart;
 
 public final class Services {
   private static Services container = null;
