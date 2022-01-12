@@ -8,11 +8,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Main {
     private static AtomicInteger linksRemoved = new AtomicInteger();
 
+    private static long offset = 0;
+
     public static void main(String[] args) {
         linksRemoved.set(0);
 
         ConnectionService connectionService = Services.getContainer().getConnectionService();
 
+        for (int i = 0; i < args.length; i++) {
+            if ("offset".equals(args[i]) && i+1 < args.length) {
+                offset = Long.parseLong(args[i+1]);
+            }
+        }
 
         var connectionLinksToRemove = connectionService.getConnection();
         var connectionLinks = connectionService.getConnection();
@@ -49,7 +56,7 @@ public class Main {
         var executorService = new BlockingExecutor(1, Executors.newFixedThreadPool(1));
 
         try {
-            st.execute("MOVE FORWARD 0 from links_to_remove_cursor;");
+            st.execute("MOVE FORWARD " + offset + " from links_to_remove_cursor;");
 
             var queryFetch = "FETCH links_to_remove_cursor;";
             var rs = st.executeQuery(queryFetch);
