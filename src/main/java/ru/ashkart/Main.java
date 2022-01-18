@@ -1,6 +1,7 @@
 package ru.ashkart;
 
 import java.sql.*;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,8 +22,8 @@ public class Main {
             }
         }
 
-        var connectionLinksToRemove = connectionService.getConnection();
-        var connectionLinks = connectionService.getConnection();
+        Connection connectionLinksToRemove = connectionService.getLinksToRemoveConnection();
+        Connection connectionLinks = connectionService.getLinksConnection();
 
         try {
             connectionLinksToRemove.setAutoCommit(false);
@@ -53,16 +54,16 @@ public class Main {
     private static void processBatch(Connection connectionLinks, Statement st) {
         LinkService linkService = Services.getContainer().getLinkService();
 
-        var executorService = new BlockingExecutor(1, Executors.newFixedThreadPool(1));
+        ExecutorService executorService = new BlockingExecutor(1, Executors.newFixedThreadPool(1));
 
         try {
             st.execute("MOVE FORWARD " + offset + " from links_to_remove_cursor;");
 
-            var queryFetch = "FETCH links_to_remove_cursor;";
-            var rs = st.executeQuery(queryFetch);
+            String queryFetch = "FETCH links_to_remove_cursor;";
+            ResultSet rs = st.executeQuery(queryFetch);
 
             while (rs.next()) {
-                var linkId = rs.getLong("link_id");
+                Long linkId = rs.getLong("link_id");
 
                 if (linkId == 0L) {
                     break;
@@ -73,6 +74,15 @@ public class Main {
                     linksRemoved.set(linksRemoved.get() + 1);
                     if ((linksRemoved.get() % 1000) == 0) {
                         System.out.println(String.format("Links removed: %d", linksRemoved.get()));
+                    }
+
+                    if ((linksRemoved.get() % 5) == 0) {
+                        try {
+                            Thread.sleep(1L);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            Thread.currentThread().interrupt();
+                        }
                     }
                 });
 

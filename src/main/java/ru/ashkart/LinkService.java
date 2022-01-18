@@ -8,7 +8,7 @@ public class LinkService {
   private static final String DELETE_STRING_TEMPLATE = "delete from links where id = %d;";
 
   public void deleteLink(Connection connectionLinks, long linkId) {
-    var query = String.format(DELETE_STRING_TEMPLATE, linkId);
+    String query = String.format(DELETE_STRING_TEMPLATE, linkId);
 
     try (Statement stmt = connectionLinks.createStatement()) {
       stmt.execute(query);
